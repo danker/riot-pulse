@@ -1,7 +1,7 @@
 [project]
-name = "agno-agents-first-playground"
+name = "riot-pulse"
 version = "0.1.0"
-description = "Add your description here"
+description = "AI-powered social listening for Riot Games communities"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

@@ -4,15 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Agno agents playground - a Python project using the Agno framework to create AI agents with various capabilities. The project demonstrates two main agents:
+Riot Pulse is an AI-powered social listening platform for Riot Games communities. Built with the Agno framework, it monitors sentiment, tracks trends, and detects issues across all Riot titles. The project includes:
+
+**Core Social Listening Agent** (`riot_social_listener.py`):
+- Sentiment analysis across Reddit, Twitter, and gaming forums
+- Patch reaction monitoring for community response tracking
+- Crisis detection for early warning on controversies
+- Trending topic identification across all Riot games
+
+**Interactive Playground** (`playground.py`):
 - Web Agent: Uses DuckDuckGo search tools for web searches
 - Finance Agent: Uses YFinance tools for financial data analysis
 
 ## Common Development Tasks
 
-### Running the Application
+### Running the Applications
 
-The main playground application is in `playground.py`:
+**Social Listening Reports:**
+```bash
+python riot_social_listener.py
+python riot_social_listener.py --debug  # With detailed logging
+```
+
+**Interactive Playground:**
 ```bash
 python playground.py
 ```

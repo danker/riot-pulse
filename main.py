@@ -1,5 +1,5 @@
 def main():
-    print("Hello from agno-agents-first-playground!")
+    print("Hello from riot-pulse!")
 
 
 if __name__ == "__main__":

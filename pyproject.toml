@@ -13,4 +13,8 @@ dependencies = [
     "pandas>=2.3.1",
     "sqlalchemy>=2.0.42",
     "yfinance>=0.2.65",
+    "python-dotenv>=1.0.0",
 ]
+
+[project.scripts]
+riot-pulse = "riot_pulse.cli:main"

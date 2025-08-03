@@ -289,22 +289,58 @@ def setup_logging(debug_mode: bool = False) -> logging.Logger:
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
     
-    # File handler for debug mode
+    # Always create a basic log file (not just debug mode)
+    Path("logs").mkdir(exist_ok=True)
+    log_filename = f"logs/riot-social-{datetime.now().strftime('%Y%m%d-%H%M%S')}.log"
+    file_handler = logging.FileHandler(log_filename)
+    file_handler.setLevel(logging.DEBUG if debug_mode else logging.INFO)
+    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_formatter)
+    logger.addHandler(file_handler)
+    logger.info(f"Logging to file: {log_filename}")
+    
     if debug_mode:
-        Path("logs").mkdir(exist_ok=True)
-        debug_filename = f"logs/debug-{datetime.now().strftime('%Y%m%d-%H%M%S')}.log"
-        file_handler = logging.FileHandler(debug_filename)
-        file_handler.setLevel(logging.DEBUG)
-        file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        file_handler.setFormatter(file_formatter)
-        logger.addHandler(file_handler)
-        logger.info(f"Debug logging enabled. Log file: {debug_filename}")
+        logger.info("Debug mode enabled - verbose logging active")
     
     return logger
 
+def extract_sources_from_content(content: str) -> tuple[str, list[str]]:
+    """
+    Extract source URLs from Perplexity response content
+    
+    Args:
+        content: The response content that may contain sources
+    
+    Returns:
+        Tuple of (cleaned_content, list_of_source_urls)
+    """
+    import re
+    
+    # Look for Perplexity-style source citations
+    # Pattern matches [1], [2], etc. and tries to find corresponding URLs
+    citation_pattern = r'\[(\d+)\]'
+    citations = re.findall(citation_pattern, content)
+    
+    # Look for URLs in the content
+    url_pattern = r'https?://[^\s\)\]]+'
+    urls = re.findall(url_pattern, content)
+    
+    # Create proper markdown references
+    cleaned_content = content
+    sources = []
+    
+    if urls:
+        # Add proper reference section
+        cleaned_content += "\n\n### Sources\n"
+        for i, url in enumerate(urls[:10], 1):  # Limit to 10 sources
+            cleaned_content += f"[{i}] {url}\n"
+            sources.append(url)
+    
+    return cleaned_content, sources
+
 def inspect_response(response, task_name: str, logger: logging.Logger) -> str:
     """
-    Inspect and log response structure, then extract content
+    Inspect and log response structure, then extract content with proper source formatting
     
     Args:
         response: The response object from agent.run()
@@ -312,7 +348,7 @@ def inspect_response(response, task_name: str, logger: logging.Logger) -> str:
         logger: Logger instance
     
     Returns:
-        Extracted content string
+        Extracted content string with proper source references
     """
     logger.debug(f"\n{'='*60}")
     logger.debug(f"Task: {task_name}")
@@ -346,6 +382,12 @@ def inspect_response(response, task_name: str, logger: logging.Logger) -> str:
     
     # Log the full response object for debugging
     logger.debug(f"Full response object:\n{pformat(vars(response) if hasattr(response, '__dict__') else response)}")
+    
+    # Extract and format sources properly
+    if content:
+        cleaned_content, sources = extract_sources_from_content(str(content))
+        logger.info(f"Extracted {len(sources)} sources for {task_name}")
+        return cleaned_content
     
     return content
 

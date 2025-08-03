@@ -5,7 +5,7 @@ Report generation engine
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import glob
 
 from ..config import ReportConfig, RiotGames, AnalysisAspects
@@ -17,10 +17,19 @@ from .formatters import MarkdownFormatter
 class ReportGenerator:
     """Generates comprehensive reports based on configuration"""
     
-    def __init__(self, config: ReportConfig, logger: logging.Logger):
+    def __init__(self, 
+                 config: ReportConfig, 
+                 logger: logging.Logger,
+                 config_file: Optional[str] = None,
+                 provider_override: Optional[str] = None,
+                 model_override: Optional[str] = None):
         self.config = config
         self.logger = logger
-        self.agent = RiotSocialListenerAgent()
+        self.agent = RiotSocialListenerAgent(
+            config_file=config_file,
+            provider_override=provider_override,
+            model_override=model_override
+        )
         self.formatter = MarkdownFormatter()
     
     def generate_report(self) -> str:

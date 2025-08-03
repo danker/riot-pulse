@@ -3,13 +3,13 @@ Core Riot Games Social Listening Agent
 """
 
 import os
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from agno.agent import Agent
-from agno.models.perplexity import Perplexity
 from dotenv import load_dotenv
 
 from ..config import RiotGames, AnalysisAspects, PERPLEXITY_CONFIG
 from ..analyzers import get_analyzer
+from ..llm import get_llm_provider, BaseLLMProvider
 
 # Load environment variables
 load_dotenv()
@@ -18,17 +18,43 @@ load_dotenv()
 class RiotSocialListenerAgent(Agent):
     """Main agent for Riot Games social listening"""
     
-    def __init__(self, perplexity_api_key: str = None):
-        # Get API key from environment if not provided
-        if perplexity_api_key is None:
-            perplexity_api_key = os.getenv("PERPLEXITY_API_KEY")
-            if not perplexity_api_key:
-                raise ValueError("PERPLEXITY_API_KEY environment variable is required")
+    def __init__(self, 
+                 llm_provider: Optional[BaseLLMProvider] = None,
+                 config_file: Optional[str] = None,
+                 provider_override: Optional[str] = None,
+                 model_override: Optional[str] = None):
+        """
+        Initialize the social listening agent
         
-        # Initialize the agent with Perplexity model
+        Args:
+            llm_provider: Pre-configured LLM provider (optional)
+            config_file: Path to configuration file (optional)
+            provider_override: Override provider from config (optional)
+            model_override: Override model from config (optional)
+        """
+        # Get LLM provider
+        if llm_provider:
+            self.llm_provider = llm_provider
+        else:
+            self.llm_provider = get_llm_provider(
+                config_file=config_file,
+                provider_override=provider_override,
+                model_override=model_override
+            )
+        
+        # For backward compatibility with Agno Agent, use the Agno model if it's Perplexity
+        # Otherwise, we'll override the run method
+        if self.llm_provider.name == "perplexity" and hasattr(self.llm_provider, 'client'):
+            model = self.llm_provider.client
+        else:
+            # Use a dummy model for non-Perplexity providers
+            # We'll override the run method to use our provider
+            model = None
+        
+        # Initialize the agent
         super().__init__(
             name="Riot Games Social Listening Agent",
-            model=Perplexity(id=PERPLEXITY_CONFIG["model_id"], api_key=perplexity_api_key),
+            model=model,
             description="Monitors community sentiment and trends across all Riot Games titles",
             instructions=PERPLEXITY_CONFIG["instructions"],
             markdown=True
@@ -54,9 +80,11 @@ class RiotSocialListenerAgent(Agent):
         analyzer = get_analyzer(aspect)
         query = analyzer.generate_query(game, timeframe)
         
-        # Run the analysis using the agent
-        response = self.run(query)
-        return response
+        # Use our LLM provider directly
+        response = self.llm_provider.query(query)
+        
+        # Return the content string
+        return response.content
     
     def get_game_display_name(self, game: RiotGames) -> str:
         """Get display name for a game"""

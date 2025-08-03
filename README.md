@@ -6,7 +6,7 @@ AI-powered social listening platform for Riot Games communities. Monitor sentime
 
 - **🎯 Multi-Game Support**: VALORANT, League of Legends, Teamfight Tactics, Legends of Runeterra, 2XKO, Riftbound, and more
 - **📊 Comprehensive Analysis**: Sentiment, patch reactions, esports scene, crisis detection, trending topics, and competitive meta
-- **🤖 AI-Powered**: Uses Perplexity AI for real-time social media and community analysis
+- **🤖 Multi-LLM Support**: Choose from Perplexity, OpenAI, Anthropic, or xAI for analysis
 - **⚡ Modular Architecture**: Easy to extend with new games and analysis types
 - **📝 Professional Reports**: Generates detailed markdown reports with sources
 - **🔧 Flexible CLI**: Configurable games, aspects, and timeframes
@@ -26,10 +26,29 @@ uv sync
 
 ### Environment Setup
 
-Create a `.env` file with your Perplexity API key:
+Create a `.env` file with your API keys (choose your preferred LLM provider):
 
 ```bash
-PERPLEXITY_API_KEY=your_api_key_here
+# At least one API key is required
+PERPLEXITY_API_KEY=your_perplexity_key_here
+OPENAI_API_KEY=your_openai_key_here  
+ANTHROPIC_API_KEY=your_anthropic_key_here
+XAI_API_KEY=your_xai_key_here
+```
+
+Or create a `config.yaml` file for more advanced configuration:
+
+```yaml
+llm:
+  provider: perplexity  # Choose: perplexity, openai, anthropic, xai
+  perplexity:
+    model: sonar-pro
+  openai:
+    model: gpt-4-turbo-preview
+  anthropic:
+    model: claude-3-opus-20240229
+  xai:
+    model: grok-1
 ```
 
 ### Basic Usage
@@ -86,6 +105,26 @@ uv run riot-pulse --games valorant,league --aspects esports,meta
 
 # Debug mode with detailed logging
 uv run riot-pulse --games valorant --aspects all --debug
+
+# Switch LLM providers
+uv run riot-pulse --llm-provider openai --games valorant --aspects sentiment
+uv run riot-pulse --llm-provider anthropic --llm-model claude-3-sonnet-20240229
+```
+
+### LLM Provider Management
+
+```bash
+# Test your LLM configuration
+uv run python -m riot_pulse --test-llm
+
+# Test specific provider setup
+uv run python -m riot_pulse --test-llm --llm-provider openai
+
+# List available providers and models
+uv run python -m riot_pulse.llm.testing list
+
+# Benchmark provider performance (requires API keys)
+uv run python -m riot_pulse.llm.testing benchmark
 ```
 
 ## Architecture
@@ -94,6 +133,11 @@ uv run riot-pulse --games valorant --aspects all --debug
 riot_pulse/
 ├── agents/          # AI agent classes
 ├── analyzers/       # Modular analysis aspects
+├── llm/            # LLM provider abstraction layer
+│   ├── adapters/   # Provider-specific adapters
+│   ├── base.py     # Base provider interface
+│   ├── config.py   # LLM configuration management
+│   └── testing.py  # Testing and validation tools
 ├── reporting/       # Report generation and formatting
 ├── utils/          # Shared utilities (logging, sources)
 ├── config.py       # Game and aspect definitions
@@ -123,11 +167,24 @@ Reports are generated in `reports/` directory with format:
 3. Register in `analyzers/__init__.py`
 4. Add to `AnalysisAspects` enum
 
+### Adding New LLM Providers
+
+1. Create adapter in `llm/adapters/` directory
+2. Inherit from `BaseLLMProvider`
+3. Implement required methods (`query`, `validate_config`, etc.)
+4. Register with `LLMProviderRegistry.register()`
+
 ### Running Tests
 
 ```bash
-# Install development dependencies
-uv sync --dev
+# Test LLM configuration
+uv run python -m riot_pulse --test-llm
+
+# Test specific provider
+uv run python -m riot_pulse.llm.testing dry-run --provider openai
+
+# Benchmark all providers (requires API keys)
+uv run python -m riot_pulse.llm.testing benchmark
 
 # Run the application
 uv run riot-pulse --games valorant --aspects sentiment
@@ -136,7 +193,11 @@ uv run riot-pulse --games valorant --aspects sentiment
 ## Requirements
 
 - Python 3.12+
-- Perplexity AI API key
+- At least one LLM provider API key:
+  - **Perplexity AI** (recommended for web search capabilities)
+  - **OpenAI** (GPT-4, GPT-4 Turbo, GPT-3.5)
+  - **Anthropic** (Claude 3 Opus, Sonnet, Haiku)
+  - **xAI** (Grok-1, Grok-Beta)
 - Internet connection for real-time analysis
 
 ## Contributing
@@ -154,5 +215,5 @@ MIT License - see LICENSE file for details
 ## Acknowledgments
 
 - Built with [Agno AI framework](https://github.com/agno-ai/agno)
-- Powered by [Perplexity AI](https://perplexity.ai)
+- LLM Support: [Perplexity AI](https://perplexity.ai), [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [xAI](https://x.ai)
 - Community data from Reddit, Twitter, gaming forums, and official sources

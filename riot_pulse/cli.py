@@ -50,6 +50,7 @@ Examples:
 
 Available games: valorant, league_of_legends, teamfight_tactics, legends_of_runeterra, 2xko, riftbound, all
 Available aspects: sentiment, patches, esports, crisis, trending, meta, all
+LLM providers: perplexity, openai, anthropic, xai (configured via --llm-provider or config.yaml)
         """
     )
     
@@ -91,6 +92,27 @@ Available aspects: sentiment, patches, esports, crisis, trending, meta, all
         help='List available analysis aspects and exit'
     )
     
+    parser.add_argument(
+        '--llm-provider',
+        help='Override LLM provider (perplexity, openai, anthropic, xai)'
+    )
+    
+    parser.add_argument(
+        '--llm-model',
+        help='Override LLM model for the selected provider'
+    )
+    
+    parser.add_argument(
+        '--config',
+        help='Path to configuration file (default: config.yaml)'
+    )
+    
+    parser.add_argument(
+        '--test-llm',
+        action='store_true',
+        help='Test LLM configuration and exit'
+    )
+    
     args = parser.parse_args()
     
     # Handle list commands
@@ -104,6 +126,17 @@ Available aspects: sentiment, patches, esports, crisis, trending, meta, all
         print("Available analysis aspects:")
         for aspect in AnalysisAspects:
             print(f"  {aspect.value}: {AnalysisAspects.get_display_name(aspect)}")
+        return
+    
+    if args.test_llm:
+        from .llm.testing import LLMTester
+        tester = LLMTester()
+        result = tester.dry_run_config(
+            config_file=args.config,
+            provider_override=args.llm_provider,
+            model_override=args.llm_model
+        )
+        tester.print_dry_run_results(result)
         return
     
     # Parse arguments
@@ -123,7 +156,13 @@ Available aspects: sentiment, patches, esports, crisis, trending, meta, all
         logger = setup_logging(debug_mode=args.debug, log_prefix="riot-pulse")
         
         # Generate report
-        generator = ReportGenerator(config, logger)
+        generator = ReportGenerator(
+            config, 
+            logger,
+            config_file=args.config,
+            provider_override=args.llm_provider,
+            model_override=args.llm_model
+        )
         filename = generator.generate_report()
         
         print(f"✅ Report generated successfully: {filename}")

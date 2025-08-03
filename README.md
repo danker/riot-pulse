@@ -6,7 +6,7 @@ AI-powered social listening platform for Riot Games communities. Monitor sentime
 
 - **🎯 Multi-Game Support**: VALORANT, League of Legends, Teamfight Tactics, Legends of Runeterra, 2XKO, Riftbound, and more
 - **📊 Comprehensive Analysis**: Sentiment, patch reactions, esports scene, crisis detection, trending topics, and competitive meta
-- **🤖 Multi-LLM Support**: Choose from Perplexity, OpenAI, Anthropic, or xAI for analysis
+- **🤖 Multi-LLM Support**: Choose from 100+ providers via Perplexity, OpenAI, Anthropic, xAI, or LiteLLM for analysis
 - **⚡ Modular Architecture**: Easy to extend with new games and analysis types
 - **📝 Professional Reports**: Generates detailed markdown reports with sources
 - **🔧 Flexible CLI**: Configurable games, aspects, and timeframes
@@ -34,13 +34,20 @@ PERPLEXITY_API_KEY=your_perplexity_key_here
 OPENAI_API_KEY=your_openai_key_here  
 ANTHROPIC_API_KEY=your_anthropic_key_here
 XAI_API_KEY=your_xai_key_here
+
+# For LiteLLM (enables 100+ additional providers)
+COHERE_API_KEY=your_cohere_key_here
+TOGETHER_API_KEY=your_together_key_here
+GROQ_API_KEY=your_groq_key_here
+REPLICATE_API_TOKEN=your_replicate_token_here
+GEMINI_API_KEY=your_gemini_key_here
 ```
 
 Or create a `config.yaml` file for more advanced configuration:
 
 ```yaml
 llm:
-  provider: perplexity  # Choose: perplexity, openai, anthropic, xai
+  provider: perplexity  # Choose: perplexity, openai, anthropic, xai, litellm
   perplexity:
     model: sonar-pro
   openai:
@@ -49,6 +56,9 @@ llm:
     model: claude-3-opus-20240229
   xai:
     model: grok-1
+  litellm:
+    model: claude-3-5-sonnet-20241022  # Access to 100+ models
+    # Examples: gemini/gemini-pro, together_ai/llama-2-70b, groq/mixtral-8x7b
 ```
 
 ### Basic Usage
@@ -109,6 +119,7 @@ uv run riot-pulse --games valorant --aspects all --debug
 # Switch LLM providers
 uv run riot-pulse --llm-provider openai --games valorant --aspects sentiment
 uv run riot-pulse --llm-provider anthropic --llm-model claude-3-sonnet-20240229
+uv run riot-pulse --llm-provider litellm --games valorant --aspects sentiment
 ```
 
 ### LLM Provider Management
@@ -198,6 +209,7 @@ uv run riot-pulse --games valorant --aspects sentiment
   - **OpenAI** (GPT-4, GPT-4 Turbo, GPT-3.5)
   - **Anthropic** (Claude 3 Opus, Sonnet, Haiku)
   - **xAI** (Grok-1, Grok-Beta)
+  - **LiteLLM** (100+ providers: Cohere, Together AI, Replicate, Hugging Face, Groq, Gemini, and more)
 - Internet connection for real-time analysis
 
 ## Contributing
@@ -215,5 +227,6 @@ MIT License - see LICENSE file for details
 ## Acknowledgments
 
 - Built with [Agno AI framework](https://github.com/agno-ai/agno)
-- LLM Support: [Perplexity AI](https://perplexity.ai), [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [xAI](https://x.ai)
+- LLM Support: [Perplexity AI](https://perplexity.ai), [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [xAI](https://x.ai), [LiteLLM](https://litellm.ai)
+- 100+ Additional Providers via LiteLLM: Cohere, Together AI, Replicate, Hugging Face, Groq, Gemini, and more
 - Community data from Reddit, Twitter, gaming forums, and official sources

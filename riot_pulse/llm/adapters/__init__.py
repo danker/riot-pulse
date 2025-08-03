@@ -32,3 +32,9 @@ try:
     __all__.append("xai")
 except ImportError:
     pass
+
+try:
+    from . import litellm
+    __all__.append("litellm")
+except ImportError:
+    pass

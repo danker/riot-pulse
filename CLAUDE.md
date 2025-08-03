@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Riot Pulse is an AI-powered social listening platform for Riot Games communities. Built with the Agno framework, it monitors sentiment, tracks trends, and detects issues across all Riot titles using multiple LLM providers.
 
 **Core Features:**
-- **Multi-LLM Support**: Perplexity, OpenAI, Anthropic, xAI with easy provider switching
+- **Multi-LLM Support**: 100+ providers via Perplexity, OpenAI, Anthropic, xAI, and LiteLLM with easy provider switching
 - **Social Listening Agent**: Comprehensive sentiment analysis and community monitoring
 - **Modular Analysis**: Sentiment, patch reactions, esports, crisis detection, trending topics, competitive meta
 - **Professional Reports**: Structured markdown reports with clickable source links
@@ -42,17 +42,64 @@ uv sync
 Create a `config.yaml` file for LLM provider configuration:
 ```yaml
 llm:
-  provider: perplexity  # Choose: perplexity, openai, anthropic, xai
+  provider: perplexity  # Choose: perplexity, openai, anthropic, xai, litellm
   perplexity:
     model: sonar-pro
   openai:
     model: gpt-4-turbo-preview
+  litellm:
+    model: claude-3-5-sonnet-20241022  # or gemini/gemini-pro, together_ai/llama-2-70b, etc.
 ```
 
 Or use environment variables:
 ```bash
 export PERPLEXITY_API_KEY=your_key
 export LLM_PROVIDER=perplexity
+```
+
+**LiteLLM Provider Examples:**
+```yaml
+llm:
+  provider: litellm
+  litellm:
+    # Anthropic Claude (direct)
+    model: claude-3-5-sonnet-20241022
+    
+    # Google Gemini
+    # model: gemini/gemini-pro
+    
+    # Together AI
+    # model: together_ai/meta-llama/Llama-2-70b-chat-hf
+    
+    # Cohere
+    # model: command-r-plus
+    
+    # Groq (fast inference)
+    # model: groq/llama2-70b-4096
+    
+    # Replicate
+    # model: replicate/meta/llama-2-70b-chat:latest
+```
+
+Set the appropriate API keys as environment variables:
+```bash
+# For Anthropic models
+export ANTHROPIC_API_KEY=your_key
+
+# For Google models  
+export GEMINI_API_KEY=your_key
+
+# For Together AI
+export TOGETHER_API_KEY=your_key
+
+# For Cohere
+export COHERE_API_KEY=your_key
+
+# For Groq
+export GROQ_API_KEY=your_key
+
+# For Replicate
+export REPLICATE_API_TOKEN=your_key
 ```
 
 ## Architecture
@@ -76,7 +123,8 @@ riot_pulse/
 ### Key Components
 
 1. **LLM Provider System** (riot_pulse/llm/)
-   - Unified interface supporting Perplexity, OpenAI, Anthropic, xAI
+   - Unified interface supporting 100+ providers: Perplexity, OpenAI, Anthropic, xAI, LiteLLM
+   - LiteLLM provides access to Cohere, Together AI, Replicate, Hugging Face, Groq, and more
    - Configuration priority: YAML → ENV → CLI
    - Provider-specific adapters with response normalization
    - Comprehensive testing and benchmarking tools

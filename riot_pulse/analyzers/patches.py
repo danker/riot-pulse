@@ -4,6 +4,7 @@ Patch reaction analysis
 
 from .base import BaseAnalyzer
 from ..config import RiotGames
+from ..utils.query_enhancer import QueryEnhancer
 
 
 class PatchAnalyzer(BaseAnalyzer):
@@ -20,37 +21,47 @@ class PatchAnalyzer(BaseAnalyzer):
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
         
-        return f"""Analyze community reactions to recent {game_name} patches and updates in the past {timeframe}.
-        
-Focus on:
-- Latest patch notes and balance changes
-- Community reception of changes
-- Balance complaints or praise
-- Meta shift discussions
-- Pro player and content creator reactions
-- Bug reports and technical issues
+        base_query = f"""Analyze recent {game_name} patch reactions and community response to game updates.
 
-Areas to examine:
-- Character/agent/champion balance changes
-- Item/weapon adjustments
-- Map changes or updates
-- New features or content
-- Quality of life improvements
-- Performance optimizations
+PATCH TRACKING PRIORITIES:
+- Identify the most recent patch version number and release date
+- Track immediate community response to balance changes
+- Monitor professional player and content creator first impressions
+- Detect emerging gameplay meta shifts and strategies
+- Identify any game-breaking bugs or technical issues
 
-Sources to check:
-- Official patch notes and dev blogs
-- Reddit patch discussion threads
-- Twitter reactions from pros and influencers
-- Gaming forums and community sites
-- Twitch/YouTube content about patches
+KEY ANALYSIS AREAS:
+1. BALANCE CHANGES RECEPTION:
+   - Character/Agent/Champion buff/nerf reactions
+   - Weapon, item, or ability adjustments feedback
+   - Community consensus on whether changes are fair/needed
+   - Professional scene impact and adaptation
 
-Provide:
-1. Summary of recent patches/updates
-2. Overall community reception
-3. Most controversial changes
-4. Positive feedback highlights
-5. Emerging meta discussions
-6. Technical issues reported
+2. TECHNICAL IMPLEMENTATION:
+   - New features, UI changes, or quality of life improvements
+   - Performance impacts (FPS, connectivity, stability)
+   - Bug reports and issues requiring hotfixes
+   - Accessibility or user experience feedback
 
-Include specific patch versions, dates, and source URLs."""
+3. META EVOLUTION:
+   - Early predictions on competitive viability changes
+   - Strategy shifts and new team compositions
+   - Tier list discussions and ranking adjustments
+   - Counter-strategy development and adaptation
+
+COMMUNITY SENTIMENT TRACKING:
+- Initial reaction sentiment (positive/negative/mixed)
+- Most upvoted/discussed changes on Reddit
+- Professional player tweet reactions and stream commentary
+- Content creator video analysis and community guides
+- Official developer response to feedback
+
+REQUIRED REPORTING FORMAT:
+1. Patch Version & Release Date: [Exact patch number and timestamp]
+2. Community Reception Score: [Positive/Mixed/Negative with rationale]
+3. Most Controversial Changes: [Specific changes causing debate]
+4. Positive Highlights: [Well-received improvements]
+5. Technical Issues: [Bugs, performance problems, or glitches]
+6. Meta Predictions: [Early competitive impact assessment]"""
+
+        return QueryEnhancer.enhance_query(base_query, game, timeframe)

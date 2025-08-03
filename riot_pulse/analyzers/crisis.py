@@ -4,6 +4,7 @@ Crisis detection and monitoring
 
 from .base import BaseAnalyzer
 from ..config import RiotGames
+from ..utils.query_enhancer import QueryEnhancer
 
 
 class CrisisAnalyzer(BaseAnalyzer):
@@ -20,48 +21,42 @@ class CrisisAnalyzer(BaseAnalyzer):
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
         
-        return f"""Monitor for potential crises, controversies, or significant negative sentiment around {game_name} in the past {timeframe}.
-        
-Look for:
-- Major community backlash or outrage
-- Controversial decisions or announcements
-- Technical issues causing widespread problems
-- Security breaches or data concerns
-- Inappropriate behavior by players/staff
-- Boycotts or protest movements
-- Viral negative content or memes
+        base_query = f"""URGENT: Crisis monitoring scan for {game_name} - detect ANY emerging issues, controversies, or negative sentiment spikes.
 
-Crisis indicators to detect:
-- Sudden spikes in negative mentions
-- Trending negative hashtags
-- High-engagement complaint threads
-- News coverage of issues
-- Influencer/streamer criticisms
-- Official apologies or responses
+CRITICAL CRISIS INDICATORS:
+- Community backlash, outrage, or coordinated negative campaigns
+- Technical disasters (server outages, game-breaking bugs, security breaches)
+- Controversial announcements, policy changes, or developer decisions
+- Professional player or content creator scandals/criticisms
+- Boycott movements, review bombing, or organized protests
+- Viral negative content, memes, or social media trends
+- Official emergency responses, apologies, or damage control statements
 
-Sources to monitor:
-- Reddit drama and complaint threads
-- Twitter/X trending topics and mentions
-- Gaming news sites covering controversies
-- Official Riot responses or statements
-- Streamer reactions and community discussions
-- Gaming forums and Discord communities
+THREAT ASSESSMENT FRAMEWORK:
+1. SEVERITY LEVEL:
+   - CRITICAL: Trending globally, major media coverage, potential legal/regulatory issues
+   - HIGH: Widespread community anger, significant engagement drops, streamer boycotts
+   - MEDIUM: Localized complaints, moderate negative sentiment, manageable scope
+   - LOW: Minor grumbling, isolated incidents, normal community friction
 
-Assessment framework:
-1. Severity Level (Low/Medium/High/Critical)
-2. Scope (Local community/Regional/Global)
-3. Root cause analysis
-4. Community sentiment trajectory
-5. Official response status
-6. Potential impact assessment
+2. IMPACT ANALYSIS:
+   - Player base reaction and potential churn risk
+   - Media coverage and PR damage assessment
+   - Financial implications (stock impact, revenue threats)
+   - Timeline and escalation potential
+   - Official response adequacy and effectiveness
 
-For each issue found:
-- Describe the controversy or problem
-- Assess severity and potential impact
-- Track community sentiment and engagement
-- Note any official responses
-- Provide recommendation for monitoring
+EMERGENCY RESPONSE INDICATORS:
+- Official Riot statements, blog posts, or emergency patches
+- Emergency developer streams or community communications
+- Sudden changes to game features, policies, or events
+- Legal notices, compliance updates, or regulatory responses
 
-If no significant issues detected, state "No major crises detected" and provide brief summary of minor concerns if any.
+OUTPUT REQUIREMENTS:
+- If NO crisis detected: State "NO MAJOR CRISES DETECTED" and summarize minor concerns
+- If crisis found: Provide immediate threat assessment with specific evidence
+- Include real-time social media metrics (upvotes, retweets, engagement)
+- Link to primary source discussions and official responses
+- Assess whether situation is escalating, stable, or de-escalating"""
 
-Include specific sources, timestamps, and engagement metrics where available."""
+        return QueryEnhancer.enhance_query(base_query, game, timeframe)

@@ -4,6 +4,7 @@ Community sentiment analysis
 
 from .base import BaseAnalyzer
 from ..config import RiotGames
+from ..utils.query_enhancer import QueryEnhancer
 
 
 class SentimentAnalyzer(BaseAnalyzer):
@@ -20,28 +21,26 @@ class SentimentAnalyzer(BaseAnalyzer):
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
         
-        return f"""Analyze community sentiment for {game_name} over the past {timeframe}.
-        
-Focus on:
-- Overall community mood and satisfaction
-- Common praise and complaints
-- Player engagement levels
-- Social media mentions and discussions
-- Reddit/Discord sentiment trends
-- Streamer and content creator opinions
+        base_query = f"""Analyze community sentiment for {game_name} in the gaming community.
 
-Sources to check:
-- Reddit (r/{game_name.lower().replace(' ', '')}, r/riotgames)
-- Twitter/X mentions and hashtags
-- Gaming forums and communities
-- Twitch/YouTube content and comments
-- Discord communities
+ANALYSIS FOCUS:
+- Overall community mood and player satisfaction levels
+- Common praise, complaints, and feedback themes
+- Player engagement and retention discussions
+- Community reaction to recent updates or events
+- Sentiment trends and shifts in perception
 
-Provide:
-1. Overall sentiment score (Very Positive/Positive/Neutral/Negative/Very Negative)
-2. Key themes driving sentiment
-3. Specific examples with sources
-4. Trending topics or discussions
-5. Notable changes from previous periods
+REQUIRED OUTPUT FORMAT:
+1. Sentiment Score: [Very Positive/Positive/Neutral/Negative/Very Negative]
+2. Key Sentiment Drivers: [Top 3-5 themes with specific examples]
+3. Community Highlights: [Notable positive discussions or achievements]
+4. Pain Points: [Major complaints or concerns with context]
+5. Trending Conversations: [Current hot topics in the community]
 
-Include specific URLs and sources for all claims."""
+EVIDENCE REQUIREMENTS:
+- Include direct quotes from community posts when possible
+- Provide specific post titles, usernames, and engagement metrics
+- Reference multiple sources to support each sentiment claim
+- Note any conflicting viewpoints or debates within the community"""
+
+        return QueryEnhancer.enhance_query(base_query, game, timeframe)

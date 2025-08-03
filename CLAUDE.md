@@ -4,17 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Riot Pulse is an AI-powered social listening platform for Riot Games communities. Built with the Agno framework, it monitors sentiment, tracks trends, and detects issues across all Riot titles. The project includes:
+Riot Pulse is an AI-powered social listening platform for Riot Games communities. Built with the Agno framework, it monitors sentiment, tracks trends, and detects issues across all Riot titles using multiple LLM providers.
 
-**Core Social Listening Agent** (`riot_social_listener.py`):
-- Sentiment analysis across Reddit, Twitter, and gaming forums
-- Patch reaction monitoring for community response tracking
-- Crisis detection for early warning on controversies
-- Trending topic identification across all Riot games
-
-**Interactive Playground** (`playground.py`):
-- Web Agent: Uses DuckDuckGo search tools for web searches
-- Finance Agent: Uses YFinance tools for financial data analysis
+**Core Features:**
+- **Multi-LLM Support**: Perplexity, OpenAI, Anthropic, xAI with easy provider switching
+- **Social Listening Agent**: Comprehensive sentiment analysis and community monitoring
+- **Modular Analysis**: Sentiment, patch reactions, esports, crisis detection, trending topics, competitive meta
+- **Professional Reports**: Structured markdown reports with clickable source links
+- **Specification-Driven Development**: All major features designed with formal specifications
 
 ## Common Development Tasks
 
@@ -22,16 +19,16 @@ Riot Pulse is an AI-powered social listening platform for Riot Games communities
 
 **Social Listening Reports:**
 ```bash
-python riot_social_listener.py
-python riot_social_listener.py --debug  # With detailed logging
+uv run python -m riot_pulse  # Default analysis
+uv run riot-pulse --games valorant,league --aspects sentiment,patches  # Specific analysis
+uv run riot-pulse --games all --aspects all --debug  # Full analysis with debug logging
 ```
 
-**Interactive Playground:**
+**LLM Provider Testing:**
 ```bash
-python playground.py
+uv run python -m riot_pulse --test-llm  # Test current configuration
+uv run python -m riot_pulse.llm.testing benchmark  # Benchmark all providers
 ```
-
-This starts a FastAPI server with the Agno playground interface where you can interact with both agents.
 
 ### Installing Dependencies
 
@@ -40,36 +37,80 @@ This project uses `uv` for dependency management:
 uv sync
 ```
 
-### Running Individual Scripts
+### Configuration
 
-For basic testing:
+Create a `config.yaml` file for LLM provider configuration:
+```yaml
+llm:
+  provider: perplexity  # Choose: perplexity, openai, anthropic, xai
+  perplexity:
+    model: sonar-pro
+  openai:
+    model: gpt-4-turbo-preview
+```
+
+Or use environment variables:
 ```bash
-python main.py
+export PERPLEXITY_API_KEY=your_key
+export LLM_PROVIDER=perplexity
 ```
 
 ## Architecture
 
-The project follows a simple structure:
-- `playground.py`: Main application file that sets up the Agno playground with two agents
-- Agent storage: SQLite database stored in `tmp/agents.db` for persisting agent conversations
-- Dependencies: Managed through `pyproject.toml` using modern Python packaging
+The project follows a modular architecture:
+```
+riot_pulse/
+├── agents/          # AI agent classes
+├── analyzers/       # Modular analysis aspects (sentiment, patches, etc.)
+├── llm/            # LLM provider abstraction layer
+│   ├── adapters/   # Provider-specific adapters
+│   ├── base.py     # Base provider interface
+│   ├── config.py   # Configuration management
+│   └── testing.py  # Validation and benchmarking tools
+├── reporting/       # Report generation and formatting
+├── utils/          # Shared utilities (logging, sources)
+├── config.py       # Game and aspect definitions
+└── cli.py          # Command line interface
+```
 
 ### Key Components
 
-1. **Web Agent** (playground.py:10-25)
-   - GPT-4o based agent with DuckDuckGo search capabilities
-   - Configured to always include sources in responses
-   - Maintains conversation history (last 5 responses)
+1. **LLM Provider System** (riot_pulse/llm/)
+   - Unified interface supporting Perplexity, OpenAI, Anthropic, xAI
+   - Configuration priority: YAML → ENV → CLI
+   - Provider-specific adapters with response normalization
+   - Comprehensive testing and benchmarking tools
 
-2. **Finance Agent** (playground.py:27-37)
-   - GPT-4o based agent with YFinance tools
-   - Provides stock prices, analyst recommendations, company info, and news
-   - Configured to display data in tables
+2. **Social Listening Agent** (riot_pulse/agents/social_listener.py)
+   - Uses LLM provider abstraction for flexible AI backend
+   - Processes community data across multiple platforms
+   - Generates structured analysis reports
 
-3. **Storage**: Both agents use SQLite storage for session persistence, stored in `tmp/agents.db`
+3. **Modular Analyzers** (riot_pulse/analyzers/)
+   - Sentiment analysis, patch reactions, crisis detection
+   - Esports monitoring, trending topics, competitive meta
+   - Each analyzer inherits from BaseAnalyzer
 
-## Development Notes
+4. **Report Generation** (riot_pulse/reporting/)
+   - Professional markdown reports with source links
+   - Structured output with game/aspect sections
+   - Automatic timestamping and file organization
 
-- The playground runs with auto-reload enabled for development
-- Agents are configured with markdown formatting for better readability
-- Each agent has its own table in the SQLite database for session isolation
+## Development Requirements
+
+### Specification-Driven Development
+**CRITICAL**: All major features MUST have specifications before implementation:
+
+1. **Create Specification First**: Use `specifications/TEMPLATE.md` to create detailed specs
+2. **Get Approval**: Review specification with stakeholders before coding
+3. **Implement According to Spec**: Follow the specification exactly
+4. **Update Specification**: Mark as "Implemented" and note any deviations
+5. **No Major Work Without Specs**: Refuse to start significant features without proper specifications
+
+### Implementation Guidelines
+- Follow existing code patterns and conventions
+- Leverage Agno framework for LLM integrations
+- Maintain backward compatibility
+- Add comprehensive error handling
+- Include testing and validation tools
+- Update documentation after changes

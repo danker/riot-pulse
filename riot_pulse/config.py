@@ -13,7 +13,8 @@ class RiotGames(Enum):
     LEAGUE_OF_LEGENDS = "league_of_legends" 
     TEAMFIGHT_TACTICS = "teamfight_tactics"
     LEGENDS_OF_RUNETERRA = "legends_of_runeterra"
-    RIOT_FORGE = "riot_forge"
+    TWOXKO = "2xko"
+    RIFTBOUND = "riftbound"
     
     @classmethod
     def get_display_name(cls, game: 'RiotGames') -> str:
@@ -23,7 +24,8 @@ class RiotGames(Enum):
             cls.LEAGUE_OF_LEGENDS: "League of Legends", 
             cls.TEAMFIGHT_TACTICS: "Teamfight Tactics",
             cls.LEGENDS_OF_RUNETERRA: "Legends of Runeterra",
-            cls.RIOT_FORGE: "Riot Forge"
+            cls.TWOXKO: "2XKO",
+            cls.RIFTBOUND: "Riftbound"
         }
         return display_names.get(game, game.value)
     
@@ -39,7 +41,9 @@ class RiotGames(Enum):
             "val": cls.VALORANT,
             "tft": cls.TEAMFIGHT_TACTICS,
             "lor": cls.LEGENDS_OF_RUNETERRA,
-            "runeterra": cls.LEGENDS_OF_RUNETERRA
+            "runeterra": cls.LEGENDS_OF_RUNETERRA,
+            "2xko": cls.TWOXKO,
+            "riftbound": cls.RIFTBOUND
         }
         
         if game_str in aliases:

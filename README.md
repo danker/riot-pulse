@@ -4,7 +4,7 @@ AI-powered social listening platform for Riot Games communities. Monitor sentime
 
 ## Features
 
-- **🎯 Multi-Game Support**: VALORANT, League of Legends, Teamfight Tactics, Legends of Runeterra, and more
+- **🎯 Multi-Game Support**: VALORANT, League of Legends, Teamfight Tactics, Legends of Runeterra, 2XKO, Riftbound, and more
 - **📊 Comprehensive Analysis**: Sentiment, patch reactions, esports scene, crisis detection, trending topics, and competitive meta
 - **🤖 AI-Powered**: Uses Perplexity AI for real-time social media and community analysis
 - **⚡ Modular Architecture**: Easy to extend with new games and analysis types
@@ -51,11 +51,12 @@ uv run riot-pulse --games all --aspects crisis --debug
 ## Available Options
 
 ### Games
-- `valorant` - VALORANT
+- `valorant` (alias: `val`) - VALORANT
 - `league_of_legends` (alias: `lol`, `league`) - League of Legends  
 - `teamfight_tactics` (alias: `tft`) - Teamfight Tactics
 - `legends_of_runeterra` (alias: `lor`, `runeterra`) - Legends of Runeterra
-- `riot_forge` - Riot Forge titles
+- `2xko` - 2XKO (Fighting Game)
+- `riftbound` - Riftbound (Physical Card Game)
 - `all` - All available games
 
 ### Analysis Aspects

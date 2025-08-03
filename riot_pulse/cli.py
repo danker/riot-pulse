@@ -48,7 +48,7 @@ Examples:
   python -m riot_pulse --games all --aspects all --timeframe "1 week"
   python -m riot_pulse --games valorant --aspects crisis --debug
 
-Available games: valorant, league_of_legends, teamfight_tactics, legends_of_runeterra, riot_forge, all
+Available games: valorant, league_of_legends, teamfight_tactics, legends_of_runeterra, 2xko, riftbound, all
 Available aspects: sentiment, patches, esports, crisis, trending, meta, all
         """
     )

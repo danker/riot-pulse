@@ -2,25 +2,27 @@
 Patch reaction analysis
 """
 
-from .base import BaseAnalyzer
 from ..config import RiotGames
 from ..utils.query_enhancer import QueryEnhancer
+from .base import BaseAnalyzer
 
 
 class PatchAnalyzer(BaseAnalyzer):
     """Analyzes community reactions to game patches and updates"""
-    
+
     @property
     def name(self) -> str:
         return "Patch Reaction Analysis"
-    
+
     @property
     def description(self) -> str:
-        return "Monitors community reactions to game patches, balance changes, and updates"
-    
+        return (
+            "Monitors community reactions to game patches, balance changes, and updates"
+        )
+
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
-        
+
         base_query = f"""Analyze recent {game_name} patch reactions and community response to game updates.
 
 PATCH TRACKING PRIORITIES:

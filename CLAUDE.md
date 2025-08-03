@@ -162,3 +162,11 @@ riot_pulse/
 - Add comprehensive error handling
 - Include testing and validation tools
 - Update documentation after changes
+
+## Development Best Practices
+
+- Always update specifications files and the project README before a push to github
+
+## Additional Notes
+
+- This project leverages the "uv" python tool. Always run python via uv and ensure any scripts created do the same.

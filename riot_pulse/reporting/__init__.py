@@ -2,7 +2,7 @@
 Reporting and output generation modules
 """
 
-from .generator import ReportGenerator
 from .formatters import MarkdownFormatter
+from .generator import ReportGenerator
 
 __all__ = ["ReportGenerator", "MarkdownFormatter"]

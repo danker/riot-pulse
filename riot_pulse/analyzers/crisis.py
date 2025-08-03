@@ -2,25 +2,25 @@
 Crisis detection and monitoring
 """
 
-from .base import BaseAnalyzer
 from ..config import RiotGames
 from ..utils.query_enhancer import QueryEnhancer
+from .base import BaseAnalyzer
 
 
 class CrisisAnalyzer(BaseAnalyzer):
     """Detects potential PR crises and negative sentiment spikes"""
-    
+
     @property
     def name(self) -> str:
         return "Crisis Detection"
-    
+
     @property
     def description(self) -> str:
         return "Monitors for potential PR issues, controversies, and negative sentiment spikes"
-    
+
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
-        
+
         base_query = f"""URGENT: Crisis monitoring scan for {game_name} - detect ANY emerging issues, controversies, or negative sentiment spikes.
 
 CRITICAL CRISIS INDICATORS:

@@ -2,26 +2,26 @@
 Trending topics analysis
 """
 
-from .base import BaseAnalyzer
 from ..config import RiotGames
+from .base import BaseAnalyzer
 
 
 class TrendingAnalyzer(BaseAnalyzer):
     """Identifies trending topics and viral content"""
-    
+
     @property
     def name(self) -> str:
         return "Trending Topics"
-    
+
     @property
     def description(self) -> str:
         return "Identifies viral content, trending discussions, and emerging topics"
-    
+
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
-        
+
         return f"""Identify trending topics and viral content related to {game_name} in the past {timeframe}.
-        
+
 Look for:
 - Viral clips, plays, or moments
 - Trending memes and community jokes

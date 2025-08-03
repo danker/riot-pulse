@@ -2,15 +2,14 @@
 Analysis modules for different aspects of social listening
 """
 
-from .base import BaseAnalyzer
-from .sentiment import SentimentAnalyzer
-from .patches import PatchAnalyzer
-from .esports import EsportsAnalyzer
-from .crisis import CrisisAnalyzer
-from .trending import TrendingAnalyzer
-from .meta import MetaAnalyzer
-
 from ..config import AnalysisAspects
+from .base import BaseAnalyzer
+from .crisis import CrisisAnalyzer
+from .esports import EsportsAnalyzer
+from .meta import MetaAnalyzer
+from .patches import PatchAnalyzer
+from .sentiment import SentimentAnalyzer
+from .trending import TrendingAnalyzer
 
 # Registry of analyzers
 _ANALYZER_REGISTRY = {
@@ -28,17 +27,17 @@ def get_analyzer(aspect: AnalysisAspects) -> BaseAnalyzer:
     analyzer_class = _ANALYZER_REGISTRY.get(aspect)
     if not analyzer_class:
         raise ValueError(f"No analyzer found for aspect: {aspect}")
-    
+
     return analyzer_class()
 
 
 __all__ = [
     "BaseAnalyzer",
-    "SentimentAnalyzer", 
+    "SentimentAnalyzer",
     "PatchAnalyzer",
     "EsportsAnalyzer",
     "CrisisAnalyzer",
     "TrendingAnalyzer",
     "MetaAnalyzer",
-    "get_analyzer"
+    "get_analyzer",
 ]

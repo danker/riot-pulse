@@ -2,29 +2,29 @@
 Competitive meta analysis
 """
 
-from .base import BaseAnalyzer
 from ..config import RiotGames
+from .base import BaseAnalyzer
 
 
 class MetaAnalyzer(BaseAnalyzer):
     """Analyzes competitive meta and strategic trends"""
-    
+
     @property
     def name(self) -> str:
         return "Competitive Meta Analysis"
-    
+
     @property
     def description(self) -> str:
         return "Tracks competitive meta shifts, tier lists, and strategic trends"
-    
+
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
-        
+
         # Customize query based on game specifics
         meta_context = self._get_meta_context(game)
-        
+
         return f"""Analyze the current competitive meta and strategic trends for {game_name} over the past {timeframe}.
-        
+
 {meta_context}
 
 Focus areas:
@@ -60,7 +60,7 @@ Provide analysis on:
 6. Impact of recent changes on competitive play
 
 Include specific statistics, pro player examples, and source URLs where available."""
-    
+
     def _get_meta_context(self, game: RiotGames) -> str:
         """Get game-specific meta analysis context"""
         contexts = {
@@ -71,7 +71,6 @@ Meta elements to track:
 - Weapon preferences and economy strategies
 - Team coordination tactics and executes
 - Anti-stratting and counter-play developments""",
-            
             RiotGames.LEAGUE_OF_LEGENDS: """
 Meta elements to track:
 - Champion pick/ban rates by role
@@ -79,7 +78,6 @@ Meta elements to track:
 - Lane assignments and flex picks
 - Itemization trends and build paths
 - Team fighting strategies and win conditions""",
-            
             RiotGames.TEAMFIGHT_TACTICS: """
 Meta elements to track:
 - Dominant team compositions and synergies
@@ -88,5 +86,5 @@ Meta elements to track:
 - Economic strategies and tempo plays
 - Flexible vs. forcing strategies""",
         }
-        
+
         return contexts.get(game, "Analyze strategic trends and competitive patterns.")

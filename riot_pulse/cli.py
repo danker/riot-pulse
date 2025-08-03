@@ -4,36 +4,35 @@ Command line interface for Riot Pulse
 
 import argparse
 import sys
-from typing import List
 
-from .config import ReportConfig, RiotGames, AnalysisAspects
+from .config import AnalysisAspects, ReportConfig, RiotGames
 from .reporting.generator import ReportGenerator
 from .utils.logging import setup_logging
 
 
-def parse_games(games_str: List[str]) -> List[str]:
+def parse_games(games_str: list[str]) -> list[str]:
     """Parse and validate game arguments"""
     if not games_str:
         return ["valorant", "league_of_legends"]  # Default games
-    
+
     # Handle comma-separated games in a single argument
     games = []
     for game_str in games_str:
-        games.extend([g.strip() for g in game_str.split(',')])
-    
+        games.extend([g.strip() for g in game_str.split(",")])
+
     return games
 
 
-def parse_aspects(aspects_str: List[str]) -> List[str]:
+def parse_aspects(aspects_str: list[str]) -> list[str]:
     """Parse and validate aspect arguments"""
     if not aspects_str:
         return ["sentiment", "patches", "crisis"]  # Default aspects
-    
+
     # Handle comma-separated aspects in a single argument
     aspects = []
     for aspect_str in aspects_str:
-        aspects.extend([a.strip() for a in aspect_str.split(',')])
-    
+        aspects.extend([a.strip() for a in aspect_str.split(",")])
+
     return aspects
 
 
@@ -51,122 +50,118 @@ Examples:
 Available games: valorant, league_of_legends, teamfight_tactics, legends_of_runeterra, 2xko, riftbound, all
 Available aspects: sentiment, patches, esports, crisis, trending, meta, all
 LLM providers: perplexity, openai, anthropic, xai (configured via --llm-provider or config.yaml)
-        """
+        """,
     )
-    
+
     parser.add_argument(
-        '--games', '-g',
-        nargs='*',
+        "--games",
+        "-g",
+        nargs="*",
         default=None,
-        help='Games to analyze (comma-separated or space-separated). Use "all" for all games.'
+        help='Games to analyze (comma-separated or space-separated). Use "all" for all games.',
     )
-    
+
     parser.add_argument(
-        '--aspects', '-a', 
-        nargs='*',
+        "--aspects",
+        "-a",
+        nargs="*",
         default=None,
-        help='Analysis aspects to perform (comma-separated or space-separated). Use "all" for all aspects.'
+        help='Analysis aspects to perform (comma-separated or space-separated). Use "all" for all aspects.',
     )
-    
+
     parser.add_argument(
-        '--timeframe', '-t',
+        "--timeframe",
+        "-t",
         default="24 hours",
-        help='Time period to analyze (default: "24 hours")'
+        help='Time period to analyze (default: "24 hours")',
     )
-    
+
     parser.add_argument(
-        '--debug', '-d',
-        action='store_true',
-        help='Enable debug logging'
+        "--debug", "-d", action="store_true", help="Enable debug logging"
     )
-    
+
     parser.add_argument(
-        '--list-games',
-        action='store_true',
-        help='List available games and exit'
+        "--list-games", action="store_true", help="List available games and exit"
     )
-    
+
     parser.add_argument(
-        '--list-aspects',
-        action='store_true',
-        help='List available analysis aspects and exit'
+        "--list-aspects",
+        action="store_true",
+        help="List available analysis aspects and exit",
     )
-    
+
     parser.add_argument(
-        '--llm-provider',
-        help='Override LLM provider (perplexity, openai, anthropic, xai)'
+        "--llm-provider",
+        help="Override LLM provider (perplexity, openai, anthropic, xai)",
     )
-    
+
     parser.add_argument(
-        '--llm-model',
-        help='Override LLM model for the selected provider'
+        "--llm-model", help="Override LLM model for the selected provider"
     )
-    
+
     parser.add_argument(
-        '--config',
-        help='Path to configuration file (default: config.yaml)'
+        "--config", help="Path to configuration file (default: config.yaml)"
     )
-    
+
     parser.add_argument(
-        '--test-llm',
-        action='store_true',
-        help='Test LLM configuration and exit'
+        "--test-llm", action="store_true", help="Test LLM configuration and exit"
     )
-    
+
     args = parser.parse_args()
-    
+
     # Handle list commands
     if args.list_games:
         print("Available games:")
         for game in RiotGames:
             print(f"  {game.value}: {RiotGames.get_display_name(game)}")
         return
-    
+
     if args.list_aspects:
         print("Available analysis aspects:")
         for aspect in AnalysisAspects:
             print(f"  {aspect.value}: {AnalysisAspects.get_display_name(aspect)}")
         return
-    
+
     if args.test_llm:
         from .llm.testing import LLMTester
+
         tester = LLMTester()
         result = tester.dry_run_config(
             config_file=args.config,
             provider_override=args.llm_provider,
-            model_override=args.llm_model
+            model_override=args.llm_model,
         )
         tester.print_dry_run_results(result)
         return
-    
+
     # Parse arguments
     games = parse_games(args.games)
     aspects = parse_aspects(args.aspects)
-    
+
     try:
         # Create configuration
         config = ReportConfig.from_cli_args(
             games=games,
             aspects=aspects,
             timeframe=args.timeframe,
-            debug_mode=args.debug
+            debug_mode=args.debug,
         )
-        
+
         # Set up logging
         logger = setup_logging(debug_mode=args.debug, log_prefix="riot-pulse")
-        
+
         # Generate report
         generator = ReportGenerator(
-            config, 
+            config,
             logger,
             config_file=args.config,
             provider_override=args.llm_provider,
-            model_override=args.llm_model
+            model_override=args.llm_model,
         )
         filename = generator.generate_report()
-        
+
         print(f"✅ Report generated successfully: {filename}")
-        
+
     except ValueError as e:
         print(f"❌ Configuration error: {e}")
         parser.print_help()

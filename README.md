@@ -185,7 +185,48 @@ Reports are generated in `reports/` directory with format:
 3. Implement required methods (`query`, `validate_config`, etc.)
 4. Register with `LLMProviderRegistry.register()`
 
-### Running Tests
+### Development Setup
+
+```bash
+# Install development dependencies
+uv sync --dev
+
+# Set up development environment (includes pre-commit hooks)
+make dev-setup
+# or
+python scripts/dev.py install && python scripts/dev.py pre-commit
+```
+
+### Code Quality and Testing
+
+```bash
+# Run linting and type checking
+make lint
+# or
+python scripts/dev.py lint
+
+# Format code
+make format
+# or  
+python scripts/dev.py format
+
+# Run all tests
+make test
+# or
+python scripts/dev.py test
+
+# Run tests with coverage
+make coverage
+# or
+python scripts/dev.py coverage
+
+# Run all quality checks (lint + test)
+make check
+# or
+python scripts/dev.py check
+```
+
+### LLM Provider Testing
 
 ```bash
 # Test LLM configuration
@@ -196,9 +237,6 @@ uv run python -m riot_pulse.llm.testing dry-run --provider openai
 
 # Benchmark all providers (requires API keys)
 uv run python -m riot_pulse.llm.testing benchmark
-
-# Run the application
-uv run riot-pulse --games valorant --aspects sentiment
 ```
 
 ## Requirements
@@ -214,11 +252,32 @@ uv run riot-pulse --games valorant --aspects sentiment
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+We welcome contributions! Please follow these steps:
+
+1. **Fork the repository** and create a feature branch
+2. **Set up development environment**: `make dev-setup`
+3. **Make your changes** following our coding standards
+4. **Write tests** for new functionality
+5. **Run quality checks**: `make check` (linting + tests must pass)
+6. **Submit a pull request** with a clear description
+
+### Development Standards
+
+- **Code Quality**: All code must pass `ruff` linting and formatting
+- **Type Checking**: Use type hints, code must pass `mypy` checks  
+- **Testing**: Write tests for new features, maintain >80% coverage
+- **Pre-commit Hooks**: Automatically enforce code quality standards
+- **Specification-Driven**: Major features require specifications (see `specifications/`)
+
+### Quick Development Commands
+
+```bash
+make help           # Show all available commands
+make dev-setup      # Set up development environment
+make check          # Run all quality checks
+make test           # Run tests
+make coverage       # Generate coverage report
+```
 
 ## License
 

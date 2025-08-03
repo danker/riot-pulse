@@ -2,29 +2,31 @@
 Esports scene analysis
 """
 
-from .base import BaseAnalyzer
 from ..config import RiotGames
+from .base import BaseAnalyzer
 
 
 class EsportsAnalyzer(BaseAnalyzer):
     """Analyzes esports scene activity and community engagement"""
-    
+
     @property
     def name(self) -> str:
         return "Esports Scene Analysis"
-    
+
     @property
     def description(self) -> str:
-        return "Monitors competitive scene, tournaments, and professional player activity"
-    
+        return (
+            "Monitors competitive scene, tournaments, and professional player activity"
+        )
+
     def generate_query(self, game: RiotGames, timeframe: str = "24 hours") -> str:
         game_name = RiotGames.get_display_name(game)
-        
+
         # Customize query based on game
         tournament_info = self._get_tournament_context(game)
-        
+
         return f"""Analyze the {game_name} esports scene activity over the past {timeframe}.
-        
+
 Focus on:
 - Recent tournament results and highlights
 - Professional player news and transfers
@@ -60,7 +62,7 @@ Provide:
 6. Viewership trends if available
 
 Include specific match results, dates, and source URLs."""
-    
+
     def _get_tournament_context(self, game: RiotGames) -> str:
         """Get game-specific tournament context"""
         contexts = {
@@ -70,14 +72,12 @@ Tournament context:
 - Regional leagues (Americas, EMEA, Pacific)
 - Masters and Champions events
 - Game Changers series""",
-            
             RiotGames.LEAGUE_OF_LEGENDS: """
 Tournament context:
 - LCS, LEC, LCK, LPL - Major regional leagues
 - MSI (Mid-Season Invitational) and Worlds Championship
 - Regional tournaments and qualifying events
 - Academy and development leagues""",
-            
             RiotGames.TEAMFIGHT_TACTICS: """
 Tournament context:
 - TFT World Championship and regional championships
@@ -85,5 +85,7 @@ Tournament context:
 - Challenger tournaments and qualifier events
 - Content creator tournaments""",
         }
-        
-        return contexts.get(game, "Check for any organized competitive events or tournaments.")
+
+        return contexts.get(
+            game, "Check for any organized competitive events or tournaments."
+        )

@@ -55,6 +55,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "**/llm/adapters/__init__.py" = ["F401"]  # Unused imports needed for dynamic loading
 "**/llm/providers.py" = ["F401"]  # Unused imports needed for dynamic loading
+"tests/**/*.py" = ["S101"]  # Allow assert statements in tests
+"scripts/dev.py" = ["S602"]  # Allow shell=True in development scripts
 
 [tool.ruff.format]
 quote-style = "double"

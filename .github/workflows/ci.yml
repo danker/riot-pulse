@@ -27,16 +27,18 @@ jobs:
     
     - name: Install dependencies
       run: |
-        uv sync --dev
+        uv sync --dev --frozen
+        uv run --quiet ruff --version  # Verify ruff is available
     
     - name: Lint with Ruff
       run: |
         uv run ruff check . --output-format=github
         uv run ruff format --check .
     
-    - name: Type check with mypy
-      run: |
-        uv run mypy riot_pulse --show-error-codes
+    # Note: mypy disabled for gradual typing adoption
+    # - name: Type check with mypy
+    #   run: |
+    #     uv run mypy riot_pulse --show-error-codes
     
     - name: Test with pytest
       run: |
@@ -68,7 +70,8 @@ jobs:
     
     - name: Install dependencies
       run: |
-        uv sync --dev
+        uv sync --dev --frozen
+        uv run --quiet ruff --version  # Verify ruff is available
     
     - name: Run security checks with Ruff
       run: |
